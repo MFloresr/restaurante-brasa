@@ -1,0 +1,12 @@
+{
+  "nombre": "Fruta de temporada",
+  "categoria": "postres",
+  "precio": 5.5,
+  "unidad": "ración",
+  "descripcion": "Cortada al momento.",
+  "alergenos": [],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 24
+}

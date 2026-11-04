@@ -1,0 +1,45 @@
+---
+// Comportamiento compartido por todas las páginas: reloj y estado de la barra superior, y contador del ticket.
+import { sitio } from '../lib/sitio';
+---
+
+<script is:inline define:vars={{ semana: sitio.semana }}>
+  // Reloj y estado «abierto/cerrado» de la barra superior (hora de Barcelona)
+  (function () {
+    var reloj = document.querySelector('[data-reloj]');
+    var estado = document.querySelector('[data-estado-local]');
+    if (!reloj) return;
+    var fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+    var dias = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    function tick() {
+      var p = {}; fmt.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+      var hora = p.hour + ':' + p.minute;
+      reloj.textContent = hora;
+      var tramos = semana[dias.indexOf(p.weekday)] || [];
+      var dentro = tramos.some(function (t) { return hora >= t[0] && hora < t[1]; });
+      if (estado) estado.textContent = dentro ? 'Abierto ahora' : 'Cerrado ahora';
+    }
+    tick(); setInterval(tick, 20000);
+  })();
+</script>
+
+<script>
+  import { cargarCarta, formatoEuros, leerTicket, totalUnidades } from '../lib/ticket';
+
+  const pintar = async () => {
+    const n = totalUnidades();
+    document.querySelectorAll<HTMLElement>('[data-contador]').forEach((c) => { c.dataset.n = String(n); c.textContent = String(n); });
+    const enlace = document.querySelector('[data-ticket-enlace]');
+    enlace?.setAttribute('aria-label', n === 0 ? 'Ticket vacío' : n === 1 ? 'Ticket, 1 plato' : `Ticket, ${n} platos`);
+    const total = document.querySelector<HTMLElement>('[data-total-cabecera]');
+    if (!total) return;
+    if (n === 0) { total.textContent = 'Ticket'; return; }
+    try {
+      const carta = await cargarCarta();
+      total.textContent = formatoEuros(leerTicket().reduce((s, l) => s + (carta.find((p) => p.id === l.id)?.precio ?? 0) * l.cantidad, 0));
+    } catch { total.textContent = 'Ticket'; }
+  };
+  document.addEventListener('brasa:ticket', pintar);
+  window.addEventListener('storage', pintar);
+  pintar();
+</script>

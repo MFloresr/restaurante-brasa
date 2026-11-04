@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Preguntas from '../components/Preguntas.astro';
+import { getPlatos } from '../lib/contenido';
+import { ALERGENOS } from '../content.config';
+import { NOMBRE_ALERGENO, NOMBRE_CATEGORIA } from '../lib/util';
+
+const platos = await getPlatos();
+---
+
+<Base titulo="Alérgenos de la carta" descripcion="Tabla de los 14 alérgenos de declaración obligatoria en cada plato de la carta, con filtro para ver qué platos contienen el que quieres evitar.">
+  <div class="contenedor cabecera-pagina">
+    <h1>Alérgenos</h1>
+    <p>Los 14 alérgenos de declaración obligatoria en cada plato. Elige uno y resaltamos los platos que lo contienen.</p>
+  </div>
+
+  <section class="seccion" style="padding-top:20px">
+    <div class="contenedor">
+      <div class="aviso aviso--alergia" style="max-width:76ch;margin-bottom:20px">
+        Cocinamos en una cocina compartida y trabajamos con productos que pueden llevar trazas. No podemos garantizar la ausencia total de un alérgeno. Si tienes una alergia o una intolerancia, díselo siempre al equipo. Información de ejemplo: el cliente debe verificarla plato por plato.
+      </div>
+      <div class="campo" style="max-width:360px">
+        <label for="a-evitar" style="font:700 1rem var(--f-ui);display:block;margin-bottom:6px">Quiero evitar</label>
+        <select id="a-evitar"><option value="">Ninguno</option>{ALERGENOS.map((a) => <option value={a}>{NOMBRE_ALERGENO[a]}</option>)}</select>
+      </div>
+      <p id="a-resumen" role="status" aria-live="polite" class="gris" style="margin:0 0 10px"></p>
+      <div class="tabla-envoltorio" tabindex="0" role="region" aria-label="Tabla de alérgenos de cada plato (se desplaza en horizontal)">
+        <table class="tabla-alerg" id="tabla">
+          <caption class="solo-lectores">Alérgenos de cada plato de la carta</caption>
+          <thead>
+            <tr><th scope="col">Plato</th>{ALERGENOS.map((a) => <th scope="col">{NOMBRE_ALERGENO[a]}</th>)}</tr>
+          </thead>
+          <tbody>
+            {platos.map((p) => (
+              <tr data-alerg={p.data.alergenos.join(' ')}>
+                <th scope="row" style="min-width:210px">{p.data.nombre}<br /><span class="gris" style="font-weight:400;font-size:0.85rem">{NOMBRE_CATEGORIA[p.data.categoria]}</span></th>
+                {ALERGENOS.map((a) => (
+                  <td>{p.data.alergenos.includes(a) ? <><span class="marca-ok" aria-hidden="true"></span><span class="solo-lectores">Contiene {NOMBRE_ALERGENO[a]}</span></> : <span class="solo-lectores">No</span>}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="letra-pequena" style="margin-top:12px">Un círculo amarillo indica que el plato contiene ese alérgeno.</p>
+    </div>
+  </section>
+  <section class="seccion seccion--panel"><div class="contenedor"><Preguntas tema="alergias" titulo="Sobre alergias e intolerancias" /></div></section>
+</Base>
+
+<script>
+  const sel = document.getElementById('a-evitar') as HTMLSelectElement;
+  const filas = [...document.querySelectorAll<HTMLElement>('#tabla tbody tr')];
+  const resumen = document.getElementById('a-resumen')!;
+  sel.addEventListener('change', () => {
+    const a = sel.value; let con = 0;
+    filas.forEach((f) => { const t = !!a && (f.dataset.alerg || '').split(' ').includes(a); f.classList.toggle('resaltar', t); if (t) con++; });
+    resumen.textContent = a ? `${con} de ${filas.length} platos contienen este alérgeno (resaltados en rojo).` : '';
+  });
+</script>

@@ -1,0 +1,17 @@
+{
+  "nombre": "Calamares a la andaluza",
+  "categoria": "picar",
+  "precio": 14.5,
+  "unidad": "ración",
+  "descripcion": "Fritos en harina fina, con limón.",
+  "alergenos": [
+    "gluten",
+    "moluscos"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": true,
+  "orden": 6,
+  "foto": "../../assets/fotos/calamares.jpg",
+  "fotoAlt": "Calamares a la andaluza, emplatado"
+}

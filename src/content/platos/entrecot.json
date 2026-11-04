@@ -1,0 +1,14 @@
+{
+  "nombre": "Entrecot de ternera",
+  "categoria": "brasa",
+  "precio": 23.5,
+  "unidad": "300 g",
+  "descripcion": "A la brasa, con patatas panadera.",
+  "alergenos": [],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": false,
+  "orden": 12,
+  "foto": "../../assets/fotos/chuleton.jpg",
+  "fotoAlt": "Entrecot de ternera, emplatado"
+}

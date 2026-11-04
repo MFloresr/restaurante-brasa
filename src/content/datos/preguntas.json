@@ -1,0 +1,11 @@
+[
+  { "id": "q1", "tema": "reservas", "pregunta": "¿Hasta cuándo puedo reservar?", "respuesta": "Puedes reservar desde la web hasta dos horas antes del turno. Para más de diez personas, escríbenos o llámanos y te preparamos una propuesta." },
+  { "id": "q2", "tema": "reservas", "pregunta": "¿Guardáis la mesa si llego tarde?", "respuesta": "Te la guardamos 15 minutos. Si vas a llegar más tarde, avísanos por teléfono o WhatsApp y lo vemos." },
+  { "id": "q3", "tema": "reservas", "pregunta": "¿Puedo cancelar o cambiar una reserva?", "respuesta": "Sí, avisándonos con la mayor antelación posible por teléfono o WhatsApp. Así podemos dar la mesa a otras personas." },
+  { "id": "q4", "tema": "pedidos", "pregunta": "¿Cuánto tarda un pedido para llevar?", "respuesta": "Unos 25 minutos desde que lo confirmamos. Al hacer el pedido eliges la hora de recogida y te avisamos si hay mucha carga." },
+  { "id": "q5", "tema": "pedidos", "pregunta": "¿Se paga al hacer el pedido?", "respuesta": "En esta versión de demostración no se cobra nada. En una versión real, podrías pagar online o al recoger el pedido, según elija el restaurante." },
+  { "id": "q6", "tema": "alergias", "pregunta": "Soy alérgico, ¿qué debo hacer?", "respuesta": "Consulta la tabla de alérgenos de la web y díselo al equipo al llegar o al hacer el pedido. Cocinamos en una cocina compartida, así que no podemos garantizar la ausencia total de trazas." },
+  { "id": "q7", "tema": "alergias", "pregunta": "¿Tenéis opciones sin gluten o veganas?", "respuesta": "Sí. En la carta puedes filtrar por «sin gluten», «vegetariano» y «vegano». Si tienes celiaquía, avísanos antes de pedir." },
+  { "id": "q8", "tema": "grupos", "pregunta": "¿Hacéis menús para grupos y celebraciones?", "respuesta": "Sí, desde ocho personas. Te proponemos un menú cerrado con precio por persona, y ajustamos las alergias y preferencias del grupo." },
+  { "id": "q9", "tema": "general", "pregunta": "¿Admitís perros?", "respuesta": "En la terraza, sí. En el interior, solo perros de asistencia. [El cliente ajusta esta respuesta a su local.]" }
+]

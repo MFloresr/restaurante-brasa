@@ -1,0 +1,18 @@
+{
+  "nombre": "Tarta de queso",
+  "categoria": "postres",
+  "precio": 7.5,
+  "unidad": "porción",
+  "descripcion": "Cremosa, con confitura de frutos rojos.",
+  "alergenos": [
+    "lacteos",
+    "huevos",
+    "gluten"
+  ],
+  "vegetariano": true,
+  "vegano": false,
+  "destacado": true,
+  "orden": 22,
+  "foto": "../../assets/fotos/tarta-queso.jpg",
+  "fotoAlt": "Tarta de queso, emplatado"
+}

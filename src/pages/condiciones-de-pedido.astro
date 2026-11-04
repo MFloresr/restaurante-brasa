@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { sitio } from '../lib/sitio';
+import { euros } from '../lib/util';
+const r = sitio.responsableLegal;
+---
+
+<Base titulo="Condiciones de pedido para llevar" descripcion="Condiciones del servicio de pedido para llevar: precios, recogida, pago, alérgenos y cancelaciones." noindex>
+  <div class="contenedor cabecera-pagina"><h1>Condiciones de pedido</h1></div>
+  <section class="seccion legal" style="padding-top:8px">
+    <div class="contenedor">
+      <p class="aviso aviso--demo" style="max-width:72ch">Plantilla de ejemplo. El cliente y su asesor deben revisarla antes de abrir el servicio de pedidos.</p>
+      <h2>1. Quién vende</h2>
+      <p>{r.razonSocial}, con NIF {r.nif} y domicilio en {r.domicilio}. Contacto: <a class="enlace" href={`mailto:${sitio.email}`}>{sitio.email}</a>.</p>
+      <h2>2. Precios</h2>
+      <p>Los precios incluyen el IVA ({sitio.iva} %) y se muestran en euros. El pedido mínimo es de {euros(sitio.pedidos.pedidoMinimo)}.</p>
+      <h2>3. Cómo se pide</h2>
+      <p>Añade los platos al ticket, elige una hora de recogida y envía la comanda. Tu pedido estará listo a la hora indicada, y ten en cuenta que necesitamos unos {sitio.pedidos.minutosPreparacion} minutos de preparación. Confirmamos el pedido por teléfono o mensaje si es necesario.</p>
+      <h2>4. Pago</h2>
+      <p>El pago se realiza al recoger el pedido o a través de la pasarela que se indique. Esta web no recoge ni guarda los datos de tu tarjeta. [El cliente define las formas de pago.]</p>
+      <h2>5. Alérgenos</h2>
+      <p>Cada plato indica los alérgenos que contiene. Cocinamos en una cocina compartida y no podemos garantizar la ausencia total de trazas. Si tienes una alergia, indícalo al hacer el pedido y díselo al equipo al recoger.</p>
+      <h2>6. Cancelaciones y reclamaciones</h2>
+      <p>Para cancelar o modificar un pedido, llámanos lo antes posible. Por tratarse de alimentos preparados al momento, no se aplica el derecho de desistimiento. Si hay algún problema con tu pedido, díselo al equipo en el momento de recogerlo o escríbenos. [El cliente completa los datos de las hojas de reclamaciones.]</p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,104 @@
+---
+import Base from '../layouts/Base.astro';
+import Formulario from '../components/Formulario.astro';
+import { sitio } from '../lib/sitio';
+
+const hoy = new Date().toISOString().slice(0, 10);
+const { comida, cena } = sitio.reservas.turnos;
+---
+
+<Base titulo="Reservar mesa" descripcion="Reserva mesa en Brasa Nova: elige día, turno, hora y número de comensales. Te confirmamos por teléfono o mensaje.">
+  <div class="contenedor cabecera-pagina">
+    <h1>Reservar mesa</h1>
+    <p>Elige día y hora, y cuántos sois. Te confirmamos la reserva por teléfono o mensaje.</p>
+  </div>
+  <section class="seccion" style="padding-top:16px">
+    <div class="contenedor dos dos--desigual" style="align-items:start">
+      <Formulario tipo="reserva" alergias boton="Solicitar la reserva" mensajeOk="Solicitud recibida. Te confirmamos la mesa en cuanto podamos, por teléfono o mensaje.">
+        <div>
+          <label for="r-fecha">Día <span class="marca" aria-hidden="true">*</span></label>
+          <input id="r-fecha" name="fecha" type="date" min={hoy} required />
+          <p class="error" data-error-para="fecha"></p>
+          <p class="ayuda" id="r-aviso-dia" role="status" aria-live="polite"></p>
+        </div>
+        <div>
+          <span id="r-pers-etiqueta" style="display:block;font:700 0.98rem var(--f-ui);margin-bottom:6px">Comensales</span>
+          <div class="personas" role="group" aria-labelledby="r-pers-etiqueta">
+            <button type="button" id="r-menos" aria-label="Un comensal menos">–</button>
+            <output id="r-pers" aria-live="polite">2</output>
+            <button type="button" id="r-mas" aria-label="Un comensal más">+</button>
+          </div>
+          <input type="hidden" name="personas" id="r-personas" value="2" />
+          <p class="ayuda">Más de {sitio.reservas.maxPersonas}: <a class="enlace" href="/grupos/">escríbenos para grupos</a>.</p>
+        </div>
+        <div class="ancho-total">
+          <fieldset>
+            <legend>Hora <span class="marca" aria-hidden="true">*</span></legend>
+            <p class="ayuda" style="margin:0 0 6px">Comida</p>
+            <div class="franjas" role="radiogroup" aria-label="Horas de comida" style="margin-bottom:10px">
+              {comida.map((h, i) => <label><input type="radio" name="hora" value={h} required={i === 0} /><span>{h}</span></label>)}
+            </div>
+            <p class="ayuda" style="margin:0 0 6px">Cena</p>
+            <div class="franjas" role="radiogroup" aria-label="Horas de cena">
+              {cena.map((h) => <label><input type="radio" name="hora" value={h} /><span>{h}</span></label>)}
+            </div>
+            <p class="error" data-error-para="hora"></p>
+          </fieldset>
+        </div>
+        <div>
+          <label for="r-zona">Zona</label>
+          <select id="r-zona" name="zona"><option value="">Me da igual</option><option value="sala">Sala</option><option value="terraza">Terraza</option></select>
+        </div>
+        <div>
+          <label for="r-nombre">Nombre <span class="marca" aria-hidden="true">*</span></label>
+          <input id="r-nombre" name="nombre" type="text" autocomplete="name" required /><p class="error" data-error-para="nombre"></p>
+        </div>
+        <div>
+          <label for="r-tel">Teléfono <span class="marca" aria-hidden="true">*</span></label>
+          <input id="r-tel" name="telefono" type="tel" autocomplete="tel" required pattern="[0-9 +]{9,}" title="Escribe un teléfono de al menos 9 cifras" /><p class="error" data-error-para="telefono"></p>
+        </div>
+        <div>
+          <label for="r-email">Correo (opcional)</label>
+          <input id="r-email" name="email" type="email" autocomplete="email" />
+        </div>
+        <div class="ancho-total">
+          <label for="r-alergias">Alergias o intolerancias (opcional)</label>
+          <textarea id="r-alergias" name="alergias" maxlength="250" style="min-height:90px" aria-describedby="r-alergias-ayuda"></textarea>
+          <p class="ayuda" id="r-alergias-ayuda">Solo si quieres que lo tengamos en cuenta. Al escribir aquí, te pediremos tu consentimiento para tratar este dato de salud.</p>
+        </div>
+        <div class="ancho-total">
+          <label for="r-nota">Otras notas (opcional)</label>
+          <input id="r-nota" name="nota" type="text" maxlength="200" placeholder="Una celebración, una trona…" />
+        </div>
+      </Formulario>
+      <aside>
+        <h2 style="font-size:1.6rem">Cómo funciona</h2>
+        <ul class="lista">
+          <li>Te llamamos o escribimos para confirmar la mesa.</li>
+          <li>Te guardamos la mesa 15 minutos.</li>
+          <li>Para cambiar o cancelar, avísanos por teléfono o WhatsApp.</li>
+        </ul>
+        <p class="letra-pequena">Esta solicitud no es una reserva confirmada hasta que te contestemos. Los arroces se hacen por encargo: pídelos al reservar.</p>
+        <p><a class="enlace" href={`tel:${sitio.telefono}`}>Prefiero llamar: {sitio.telefonoVisible}</a></p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Stepper de comensales y aviso de día cerrado
+  const max = 10;
+  const sal = document.getElementById('r-pers')!, hid = document.getElementById('r-personas') as HTMLInputElement;
+  let n = 2;
+  const pintar = () => { sal.textContent = String(n); hid.value = String(n); (document.getElementById('r-menos') as HTMLButtonElement).disabled = n <= 1; (document.getElementById('r-mas') as HTMLButtonElement).disabled = n >= max; };
+  document.getElementById('r-menos')!.addEventListener('click', () => { n = Math.max(1, n - 1); pintar(); });
+  document.getElementById('r-mas')!.addEventListener('click', () => { n = Math.min(max, n + 1); pintar(); });
+  pintar();
+  const fecha = document.getElementById('r-fecha') as HTMLInputElement;
+  const aviso = document.getElementById('r-aviso-dia')!;
+  fecha.addEventListener('input', () => {
+    if (!fecha.value) { aviso.textContent = ''; return; }
+    const d = new Date(fecha.value + 'T12:00:00').getDay();
+    aviso.textContent = d === 1 ? 'Los lunes estamos cerrados. Elige otro día.' : d === 0 ? 'Los domingos abrimos solo a mediodía.' : '';
+  });
+</script>

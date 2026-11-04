@@ -1,0 +1,5 @@
+[
+  { "id": "o1", "nombre": "Marta", "contexto": "Cena en pareja", "texto": "Pedimos desde la web y ya teníamos la mesa preparada. El arroz estaba en su punto y la camarera nos explicó los alérgenos sin que lo pidiéramos." },
+  { "id": "o2", "nombre": "Iván", "contexto": "Comida de grupo", "texto": "Éramos doce y nos prepararon un menú cerrado con precio claro. Cero sorpresas en la cuenta." },
+  { "id": "o3", "nombre": "Lucía", "contexto": "Pedido para llevar", "texto": "Lo recogí a la hora indicada y estaba caliente y bien embalado. La tortilla, de las mejores que he probado." }
+]

@@ -1,0 +1,47 @@
+---
+import { menu, sitio } from '../lib/sitio';
+const { direccion: d } = sitio;
+---
+
+<footer class="pie">
+  <div class="pie__aviso">Web de demostración: los datos, la carta y las opiniones son de ejemplo. No se cobra ni se prepara ningún pedido.</div>
+  <div class="contenedor pie__contenido">
+    <div class="pie__rejilla">
+      <div>
+        <a class="logo" href="/"><svg class="logo__marca" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#e8643a" /><path d="M32 12c4 7 12 10 12 21a12 12 0 0 1-24 0c0-5 3-8 5-11 1 4 3 5 4 5 0-5-1-9 3-15z" fill="#17191c" /></svg><span translate="no">Brasa Nova</span><span class="solo-lectores"> restaurante, ir al inicio</span></a>
+        <p style="margin-top:14px;max-width:32ch" class="gris">{sitio.eslogan}.</p>
+        <p class="gris">{d.calle}<br />{d.cp} {d.ciudad} ({d.provincia})</p>
+      </div>
+      <div>
+        <h2>Contacto</h2>
+        <ul>
+          <li><a href={`tel:${sitio.telefono}`}>{sitio.telefonoVisible}</a></li>
+          <li><a href={`mailto:${sitio.email}`}>{sitio.email}</a></li>
+          <li><a href={`https://wa.me/${sitio.whatsapp}`}>WhatsApp</a></li>
+          <li><a href="/contacto/">Cómo llegar</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Horario</h2>
+        <ul>
+          {sitio.horarios.map((h) => (
+            <li><strong>{h.etiqueta}</strong><br /><span class="gris">{h.tramos.length ? h.tramos.map((t) => `${t.abre} a ${t.cierra}`).join(' y ') : 'Cerrado'}</span></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2>Navegar</h2>
+        <ul>
+          {menu.map((m) => <li><a href={m.href}>{m.texto}</a></li>)}
+          <li><a href="/blog/">Cuaderno de cocina</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie__bajo">
+      <span>© {new Date().getFullYear()} {sitio.nombre}</span>
+      <span>
+        <a href="/aviso-legal/">Aviso legal</a> · <a href="/condiciones-de-pedido/">Condiciones de pedido</a> · <a href="/privacidad/">Privacidad</a> · <a href="/cookies/">Cookies</a> · <a href="/creditos/">Créditos de las fotos</a>
+      </span>
+    </div>
+  </div>
+</footer>

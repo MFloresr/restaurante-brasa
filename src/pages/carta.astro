@@ -1,0 +1,248 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { getPlatos } from '../lib/contenido';
+import { sitio } from '../lib/sitio';
+import { ALERGENOS } from '../content.config';
+import { CATEGORIAS, NOMBRE_ALERGENO, euros } from '../lib/util';
+
+const platos = await getPlatos();
+const datos = await Promise.all(
+  platos.map(async (p) => {
+    const d = p.data;
+    const foto = d.foto ? (await getImage({ src: d.foto, width: 900, format: 'webp' })).src : null;
+    return { id: p.id, nombre: d.nombre, categoria: d.categoria, precio: d.precio, unidad: d.unidad, descripcion: d.descripcion, alergenos: d.alergenos, vegetariano: d.vegetariano, vegano: d.vegano, foto, fotoAlt: d.fotoAlt ?? '' };
+  }),
+);
+const color = Object.fromEntries(CATEGORIAS.map((c) => [c.id, c.color]));
+const cuenta = (id: string) => platos.filter((p) => p.data.categoria === id).length;
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'Menu',
+  name: `Carta de ${sitio.nombre}`,
+  hasMenuSection: CATEGORIAS.map((c) => ({
+    '@type': 'MenuSection',
+    name: c.nombre,
+    hasMenuItem: platos.filter((p) => p.data.categoria === c.id).map((p) => ({ '@type': 'MenuItem', name: p.data.nombre, description: p.data.descripcion, offers: { '@type': 'Offer', price: p.data.precio, priceCurrency: 'EUR' } })),
+  })),
+};
+---
+
+<Base titulo="Carta y pedido para llevar" descripcion="Toda la carta de Brasa Nova con alérgenos y filtros. Toca los platos, arma tu ticket y pide para llevar." jsonld={jsonld}>
+  <div class="contenedor cabecera-pagina" style="padding-bottom:0">
+    <h1 style="font-size:clamp(2.2rem,5vw,3.6rem)">La carta</h1>
+    <p style="font-size:1.1rem">Toca un plato para añadirlo al ticket. Con la <strong>i</strong> ves los ingredientes y los alérgenos. Pide para llevar o <a class="enlace" href="/reservar/">reserva mesa</a>.</p>
+  </div>
+
+  <div class="contenedor tpv" id="tpv" data-platos={JSON.stringify(datos)} data-iva={sitio.iva} data-minimo={sitio.pedidos.pedidoMinimo}>
+    <div>
+      <div class="rail" role="group" aria-label="Categorías de la carta">
+        <button type="button" class="tesela tesela--todo" aria-pressed="true" data-cat="">Toda la carta<small>{platos.length}</small></button>
+        {CATEGORIAS.map((c) => <button type="button" class="tesela" style={`--c:${c.color}`} aria-pressed="false" data-cat={c.id}>{c.nombre}<small>{cuenta(c.id)}</small></button>)}
+      </div>
+      <form class="rail__filtros" id="filtros" onsubmit="return false" aria-label="Filtros de la carta">
+        <fieldset>
+          <legend>Filtrar</legend>
+          <label class="interruptor"><input type="checkbox" id="f-veg" />Vegetariano</label>
+          <label class="interruptor"><input type="checkbox" id="f-vegano" />Vegano</label>
+          <div style="margin-top:6px">
+            <label for="f-evitar" style="font:700 0.92rem var(--f-ui);color:var(--gris);display:block;margin-bottom:4px">Sin este alérgeno</label>
+            <select id="f-evitar" style="min-height:46px">
+              <option value="">Ninguno</option>
+              {ALERGENOS.map((a) => <option value={a}>{NOMBRE_ALERGENO[a]}</option>)}
+            </select>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+
+    <section aria-labelledby="t-lista">
+      <h2 id="t-lista" class="solo-lectores">Platos</h2>
+      <p id="resultados" role="status" aria-live="polite" style="margin:0 0 10px;font-weight:700;color:var(--gris)"></p>
+      <div class="platos" id="lista">
+        {platos.map((p) => (
+          <article class="plato" style={`--c:${color[p.data.categoria]}`} data-id={p.id} data-cat={p.data.categoria} data-veg={p.data.vegetariano ? '1' : '0'} data-vegano={p.data.vegano ? '1' : '0'} data-alerg={p.data.alergenos.join(' ')}>
+            <h3>{p.data.nombre}</h3>
+            <span class="precio num">{euros(p.data.precio)}</span>
+            <p class="plato__desc">{p.data.descripcion} <span style="white-space:nowrap">· {p.data.unidad}</span></p>
+            <div class="plato__pie">
+              <span class="plato__marcas">
+                {p.data.vegano ? <span class="etiqueta etiqueta--v">Vegano</span> : p.data.vegetariano ? <span class="etiqueta etiqueta--v">Vegetariano</span> : null}
+                {p.data.alergenos.length > 0 && <span class="etiqueta etiqueta--aviso">{p.data.alergenos.length} {p.data.alergenos.length === 1 ? 'alérgeno' : 'alérgenos'}</span>}
+              </span>
+              <span style="display:flex;gap:8px;align-items:center">
+                <button type="button" class="plato__info" data-info={p.id} aria-label={`Ver ingredientes y alérgenos de ${p.data.nombre}`}>i</button>
+                <button type="button" class="plato__anadir" data-anadir={p.id} aria-label={`Añadir ${p.data.nombre} al ticket`}>+</button>
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="vacio" id="vacio" hidden>
+        <h3>Ningún plato con esos filtros</h3>
+        <p>Prueba a quitar algún filtro o consulta con el equipo qué podemos prepararte.</p>
+      </div>
+    </section>
+
+    <aside class="ticket-caja" aria-label="Tu ticket" id="ticket-escritorio-caja">
+      <div id="ticket-escritorio"></div>
+    </aside>
+  </div>
+
+  <p class="solo-lectores" role="status" aria-live="polite" id="anuncio"></p>
+
+  <div class="barra-ticket" id="barra-ticket" data-n="0">
+    <button type="button" class="btn btn--bloque" id="abrir-ticket">Ver el ticket</button>
+  </div>
+
+  <dialog class="ticket-movil" id="ticket-movil" aria-label="Tu ticket">
+    <div class="ticket-movil__cuerpo">
+      <div id="ticket-movil-contenido"></div>
+      <button type="button" class="btn btn--sec btn--bloque" style="margin-top:12px" id="cerrar-ticket">Seguir eligiendo</button>
+    </div>
+  </dialog>
+
+  <dialog class="detalle" id="detalle" aria-labelledby="d-titulo">
+    <button type="button" class="detalle__cerrar" id="d-cerrar" aria-label="Cerrar">×</button>
+    <div class="detalle__foto" id="d-foto" hidden><img id="d-img" alt="" width="900" height="563" /></div>
+    <div class="detalle__cuerpo">
+      <p id="d-categoria" class="gris" style="margin:0 0 4px;font-weight:700"></p>
+      <h2 id="d-titulo" style="font-size:2rem;margin-bottom:6px"></h2>
+      <p id="d-desc" style="margin-bottom:10px"></p>
+      <p style="font-weight:800;margin:0 0 2px">Contiene</p>
+      <ul class="alergenos" id="d-alergenos"></ul>
+      <p class="letra-pequena">Cocinamos en una cocina compartida: no podemos garantizar la ausencia total de trazas. Si tienes una alergia, díselo siempre al equipo.</p>
+      <button type="button" class="btn btn--bloque" id="d-anadir">Añadir al ticket</button>
+    </div>
+  </dialog>
+</Base>
+
+<script>
+  import { guardarTicket, leerTicket, sumar, formatoEuros, totalUnidades } from '../lib/ticket';
+
+  type P = { id: string; nombre: string; categoria: string; precio: number; unidad: string; descripcion: string; alergenos: string[]; vegetariano: boolean; vegano: boolean; foto: string | null; fotoAlt: string };
+  const raiz = document.getElementById('tpv')!;
+  const platos: P[] = JSON.parse(raiz.dataset.platos || '[]');
+  const iva = Number(raiz.dataset.iva), minimo = Number(raiz.dataset.minimo);
+  const porId = new Map(platos.map((p) => [p.id, p]));
+  const NOMBRE_ALERG: Record<string, string> = { gluten: 'Gluten', crustaceos: 'Crustáceos', huevos: 'Huevos', pescado: 'Pescado', cacahuetes: 'Cacahuetes', soja: 'Soja', lacteos: 'Lácteos', 'frutos-secos': 'Frutos de cáscara', apio: 'Apio', mostaza: 'Mostaza', sesamo: 'Sésamo', sulfitos: 'Sulfitos', altramuces: 'Altramuces', moluscos: 'Moluscos' };
+  const NOMBRE_CAT: Record<string, string> = { picar: 'Para picar', brasa: 'A la brasa', arroces: 'Arroces', postres: 'Postres', bebidas: 'Bebidas' };
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const escapar = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+  // --- Filtros ---
+  const tarjetas = [...document.querySelectorAll<HTMLElement>('.plato')];
+  let categoria = '';
+  const filtrar = () => {
+    const veg = $<HTMLInputElement>('f-veg').checked, vegano = $<HTMLInputElement>('f-vegano').checked, evitar = $<HTMLSelectElement>('f-evitar').value;
+    let n = 0;
+    for (const t of tarjetas) {
+      const ok = (!categoria || t.dataset.cat === categoria) && (!veg || t.dataset.veg === '1') && (!vegano || t.dataset.vegano === '1') && (!evitar || !(t.dataset.alerg || '').split(' ').includes(evitar));
+      t.hidden = !ok; if (ok) n++;
+    }
+    $('resultados').textContent = n === 1 ? '1 plato' : `${n} platos`;
+    $('vacio').hidden = n !== 0;
+    const q = new URLSearchParams(); if (categoria) q.set('cat', categoria); if (veg) q.set('veg', '1'); if (vegano) q.set('vegano', '1'); if (evitar) q.set('sin', evitar);
+    history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
+  };
+  document.querySelectorAll<HTMLButtonElement>('.tesela').forEach((b) => b.addEventListener('click', () => {
+    categoria = b.dataset.cat || '';
+    document.querySelectorAll('.tesela').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    filtrar();
+  }));
+  $('filtros').addEventListener('input', filtrar);
+  const q = new URLSearchParams(location.search);
+  if (q.get('cat')) { const b = document.querySelector<HTMLButtonElement>(`.tesela[data-cat="${q.get('cat')}"]`); if (b) { categoria = b.dataset.cat!; document.querySelectorAll('.tesela').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); } }
+  if (q.get('veg')) $<HTMLInputElement>('f-veg').checked = true;
+  if (q.get('vegano')) $<HTMLInputElement>('f-vegano').checked = true;
+  if (q.get('sin')) $<HTMLSelectElement>('f-evitar').value = q.get('sin')!;
+  filtrar();
+
+  // --- Ticket ---
+  const calculo = () => {
+    const lineas = leerTicket().filter((l) => porId.has(l.id));
+    const total = lineas.reduce((s, l) => s + porId.get(l.id)!.precio * l.cantidad, 0);
+    return { lineas, total, n: lineas.reduce((s, l) => s + l.cantidad, 0) };
+  };
+  const ticketHtml = () => {
+    const { lineas, total } = calculo();
+    const fecha = new Intl.DateTimeFormat('es-ES', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Madrid' }).format(new Date());
+    const cuerpo = lineas.length
+      ? lineas.map((l) => {
+          const p = porId.get(l.id)!;
+          return `<div class="ticket__linea" data-id="${p.id}"><strong>${escapar(p.nombre)}</strong><span class="num">${formatoEuros(p.precio * l.cantidad)}</span><div class="cantidad" role="group" aria-label="Cantidad de ${escapar(p.nombre)}"><button type="button" data-menos aria-label="Quitar una unidad">–</button><output aria-live="polite">${l.cantidad}</output><button type="button" data-mas aria-label="Añadir una unidad">+</button></div><span class="meta" style="text-align:right">${formatoEuros(p.precio)} c/u</span></div>`;
+        }).join('')
+      : '<p class="ticket__vacio">Aún no has añadido nada.<br />Toca un plato de la carta.</p>';
+    const base = total / (1 + iva / 100);
+    const falta = minimo - total;
+    return `<div class="ticket"><h2>BRASA NOVA</h2><p class="ticket__sub">COMANDA · PARA LLEVAR<br />${fecha}</p><hr />${cuerpo}<hr />
+      <div class="ticket__iva"><span>Base imponible</span><span class="num">${formatoEuros(base)}</span></div>
+      <div class="ticket__iva"><span>IVA ${iva} % incluido</span><span class="num">${formatoEuros(total - base)}</span></div>
+      <div class="ticket__total" style="margin-top:6px"><span>TOTAL</span><span class="num">${formatoEuros(total)}</span></div>
+      <p class="ticket__sub" style="margin:10px 0 0">DEMOSTRACIÓN: no se cobra nada</p></div>
+      <div class="ticket-accion">${lineas.length === 0 ? '' : falta > 0 ? `<p class="ticket-nota" style="margin-top:0">Pedido mínimo ${formatoEuros(minimo)}: te faltan ${formatoEuros(falta)}.</p><button type="button" class="btn btn--bloque" disabled>Enviar comanda</button>` : '<a class="btn btn--bloque" href="/pedido/">Enviar comanda</a>'}
+      ${lineas.length ? '<button type="button" class="btn btn--sec btn--peq btn--bloque" style="margin-top:8px" data-vaciar>Vaciar el ticket</button>' : ''}</div>`;
+  };
+  const pintar = () => {
+    $('ticket-escritorio').innerHTML = ticketHtml();
+    $('ticket-movil-contenido').innerHTML = ticketHtml();
+    const { total, n } = calculo();
+    const barra = $('barra-ticket'); barra.dataset.n = String(n);
+    $('abrir-ticket').textContent = `Ver ticket · ${n} ${n === 1 ? 'plato' : 'platos'} · ${formatoEuros(total)}`;
+  };
+  const manejarTicket = (e: Event) => {
+    const t = e.target as HTMLElement;
+    const b = t.closest('button');
+    if (!b) return;
+    const fila = t.closest<HTMLElement>('[data-id]');
+    if (b.hasAttribute('data-mas') && fila) sumar(fila.dataset.id!, 1);
+    else if (b.hasAttribute('data-menos') && fila) sumar(fila.dataset.id!, -1);
+    else if (b.hasAttribute('data-vaciar')) guardarTicket([]);
+  };
+  $('ticket-escritorio').addEventListener('click', manejarTicket);
+  $('ticket-movil-contenido').addEventListener('click', manejarTicket);
+  document.addEventListener('brasa:ticket', pintar);
+  window.addEventListener('storage', pintar);
+
+  // --- Añadir platos ---
+  const anadir = (id: string, tarjeta?: HTMLElement | null) => {
+    sumar(id, 1);
+    const p = porId.get(id)!;
+    $('anuncio').textContent = `${p.nombre} añadido al ticket. Total: ${formatoEuros(calculo().total)}.`;
+    if (tarjeta) { tarjeta.classList.remove('sumado'); void tarjeta.offsetWidth; tarjeta.classList.add('sumado'); }
+  };
+  $('lista').addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const info = t.closest<HTMLElement>('[data-info]');
+    if (info) { abrirDetalle(info.dataset.info!); return; }
+    const art = t.closest<HTMLElement>('.plato');
+    if (art) anadir(art.dataset.id!, art); // todo el plato es tocable, como en un TPV
+  });
+
+  // --- Detalle de plato ---
+  const detalle = $<HTMLDialogElement>('detalle');
+  let actual = '';
+  function abrirDetalle(id: string) {
+    const p = porId.get(id)!; actual = id;
+    $('d-categoria').textContent = `${NOMBRE_CAT[p.categoria]} · ${p.unidad}`;
+    $('d-titulo').textContent = `${p.nombre} · ${formatoEuros(p.precio)}`;
+    $('d-desc').textContent = p.descripcion;
+    const foto = $('d-foto'), img = $<HTMLImageElement>('d-img');
+    if (p.foto) { img.src = p.foto; img.alt = p.fotoAlt; foto.hidden = false; } else foto.hidden = true;
+    $('d-alergenos').innerHTML = p.alergenos.length
+      ? p.alergenos.map((a) => `<li>${NOMBRE_ALERG[a] ?? a}</li>`).join('')
+      : '<li class="ninguno">Ninguno de los 14 alérgenos declarados</li>';
+    detalle.showModal();
+  }
+  $('d-cerrar').addEventListener('click', () => detalle.close());
+  $('d-anadir').addEventListener('click', () => { anadir(actual); detalle.close(); });
+  detalle.addEventListener('click', (e) => { if (e.target === detalle) detalle.close(); });
+
+  // --- Ticket en móvil ---
+  const dm = $<HTMLDialogElement>('ticket-movil');
+  $('abrir-ticket').addEventListener('click', () => dm.showModal());
+  $('cerrar-ticket').addEventListener('click', () => dm.close());
+  dm.addEventListener('click', (e) => { if (e.target === dm) dm.close(); });
+  void totalUnidades;
+  pintar();
+</script>

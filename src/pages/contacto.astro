@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import Formulario from '../components/Formulario.astro';
+import AbiertoAhora from '../components/AbiertoAhora.astro';
+import Preguntas from '../components/Preguntas.astro';
+import { sitio } from '../lib/sitio';
+
+const { direccion: d } = sitio;
+---
+
+<Base titulo="Contacto y cómo llegar" descripcion={`Contacta con ${sitio.nombre}: teléfono, WhatsApp, correo, dirección y horario.`}>
+  <div class="contenedor cabecera-pagina">
+    <h1>Contacto</h1>
+    <p>Llámanos, escríbenos o pásate. Para reservar, usa el <a class="enlace" href="/reservar/">formulario de reservas</a>.</p>
+  </div>
+  <section class="seccion" style="padding-top:16px">
+    <div class="contenedor dos dos--desigual" style="align-items:start">
+      <Formulario tipo="contacto" boton="Enviar el mensaje">
+        <div><label for="m-nombre">Nombre <span class="marca" aria-hidden="true">*</span></label><input id="m-nombre" name="nombre" type="text" autocomplete="name" required /><p class="error" data-error-para="nombre"></p></div>
+        <div><label for="m-email">Correo <span class="marca" aria-hidden="true">*</span></label><input id="m-email" name="email" type="email" autocomplete="email" required /><p class="error" data-error-para="email"></p></div>
+        <div class="ancho-total"><label for="m-msg">Mensaje <span class="marca" aria-hidden="true">*</span></label><textarea id="m-msg" name="mensaje" required></textarea><p class="error" data-error-para="mensaje"></p></div>
+      </Formulario>
+      <aside>
+        <h2 style="font-size:1.6rem">El local</h2>
+        <p><AbiertoAhora /></p>
+        <p>{d.calle}<br />{d.cp} {d.ciudad} ({d.provincia})</p>
+        <ul class="lista">
+          <li>Teléfono: <a class="enlace" href={`tel:${sitio.telefono}`}>{sitio.telefonoVisible}</a></li>
+          <li>WhatsApp: <a class="enlace" href={`https://wa.me/${sitio.whatsapp}`}>escríbenos</a></li>
+          <li>Correo: <a class="enlace" href={`mailto:${sitio.email}`}>{sitio.email}</a></li>
+        </ul>
+        <div class="tabla-envoltorio">
+          <table>
+            <caption class="solo-lectores">Horario</caption>
+            <tbody>{sitio.horarios.map((h) => <tr><th scope="row">{h.etiqueta}</th><td class="num">{h.tramos.length ? h.tramos.map((t) => `${t.abre} a ${t.cierra}`).join(' y ') : 'Cerrado'}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <p style="margin-top:16px"><a class="btn btn--sec" href={sitio.mapa} rel="noopener">Abrir el mapa</a></p>
+        <p class="letra-pequena">El mapa se abre en otra página, así que esta web no carga nada de terceros.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="seccion seccion--panel"><div class="contenedor"><Preguntas tema="reservas" titulo="Sobre las reservas" /></div></section>
+</Base>

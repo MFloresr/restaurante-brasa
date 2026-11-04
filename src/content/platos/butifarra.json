@@ -1,0 +1,14 @@
+{
+  "nombre": "Butifarra con mongetes",
+  "categoria": "brasa",
+  "precio": 13.5,
+  "unidad": "ración",
+  "descripcion": "Butifarra a la brasa con judías blancas salteadas.",
+  "alergenos": [
+    "sulfitos"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": false,
+  "orden": 15
+}

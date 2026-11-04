@@ -1,0 +1,14 @@
+{
+  "nombre": "Jamón ibérico de bellota",
+  "categoria": "picar",
+  "precio": 24.0,
+  "unidad": "ración",
+  "descripcion": "Cortado a cuchillo, con pan de cristal.",
+  "alergenos": [
+    "gluten"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": false,
+  "orden": 9
+}

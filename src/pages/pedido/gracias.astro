@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import { sitio } from '../../lib/sitio';
+---
+
+<Base titulo="Comanda recibida" descripcion="Confirmación de tu pedido para llevar." noindex>
+  <div class="contenedor cabecera-pagina"><h1 style="font-size:clamp(2.2rem,5vw,3.6rem)">Comanda recibida</h1></div>
+  <section class="seccion" style="padding-top:16px">
+    <div class="contenedor" style="max-width:760px">
+      <div id="g-pedido" hidden>
+        <p class="aviso aviso--demo" style="margin-top:0">Modo demostración: este pedido no se ha cobrado ni se ha enviado a ninguna cocina.</p>
+        <p style="font-size:1.4rem">Tu número de pedido es <strong class="num" id="g-numero" style="font-family:var(--f-ticket)"></strong>.</p>
+        <p id="g-texto" class="texto"></p>
+        <div class="ticket" style="max-width:420px;margin:24px 0;font-family:var(--f-ticket)">
+          <h2>BRASA NOVA</h2>
+          <p class="ticket__sub">COMANDA · PARA LLEVAR</p>
+          <hr />
+          <div id="g-lineas"></div>
+          <hr />
+          <div class="ticket__total"><span>TOTAL</span><span class="num" id="g-total"></span></div>
+        </div>
+        <p class="letra-pequena">Recogida en {sitio.direccion.calle}, {sitio.direccion.ciudad}. Pago al recoger (en una versión real).</p>
+      </div>
+      <div id="g-nada" class="vacio" hidden>
+        <h2 style="font-size:1.8rem">No hay ningún pedido reciente</h2>
+        <p>Si acabas de pedir, revisa tu teléfono. Si no, empieza por la carta.</p>
+        <a class="btn" href="/carta/">Ir a la carta</a>
+      </div>
+      <p style="margin-top:28px"><a class="btn btn--sec" href="/">Volver al inicio</a> <a class="enlace" style="margin-left:16px" href="/contacto/">¿Dudas? Llámanos</a></p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { formatoEuros } from '../../lib/ticket';
+  let pedido: { numero: string; total: number; hora: string; nombre: string; lineas: { nombre: string; cantidad: number; precio: number }[] } | null = null;
+  try { const v = sessionStorage.getItem('brasa:pedido'); pedido = v ? JSON.parse(v) : null; } catch { pedido = null; }
+  if (!pedido) document.getElementById('g-nada')!.hidden = false;
+  else {
+    document.getElementById('g-pedido')!.hidden = false;
+    document.getElementById('g-numero')!.textContent = pedido.numero;
+    document.getElementById('g-total')!.textContent = formatoEuros(pedido.total);
+    document.getElementById('g-texto')!.textContent = `Gracias, ${String(pedido.nombre).split(' ')[0]}. Tu pedido estará listo para recoger a las ${pedido.hora}.`;
+    document.getElementById('g-lineas')!.innerHTML = pedido.lineas.map((l) => `<div class="ticket__linea"><strong>${l.cantidad} × ${l.nombre}</strong><span class="num">${formatoEuros(l.precio * l.cantidad)}</span></div>`).join('');
+  }
+</script>

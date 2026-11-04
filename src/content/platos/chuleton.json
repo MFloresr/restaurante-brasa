@@ -1,0 +1,14 @@
+{
+  "nombre": "Chuletón madurado",
+  "categoria": "brasa",
+  "precio": 54.0,
+  "unidad": "para compartir (1 kg aprox.)",
+  "descripcion": "Cuarenta y cinco días de maduración, con patatas y pimientos.",
+  "alergenos": [],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": true,
+  "orden": 11,
+  "foto": "../../assets/fotos/chuleton-cc0.jpg",
+  "fotoAlt": "Chuletón a la brasa sobre una piedra caliente, con patatas fritas"
+}

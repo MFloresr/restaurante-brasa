@@ -1,0 +1,14 @@
+{
+  "nombre": "Verduras a la brasa",
+  "categoria": "brasa",
+  "precio": 12.5,
+  "unidad": "ración",
+  "descripcion": "Berenjena, pimiento, cebolla y calabacín con romesco.",
+  "alergenos": [
+    "frutos-secos"
+  ],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 16
+}

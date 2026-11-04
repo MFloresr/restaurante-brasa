@@ -1,0 +1,12 @@
+{
+  "nombre": "Refresco",
+  "categoria": "bebidas",
+  "precio": 2.8,
+  "unidad": "33 cl",
+  "descripcion": "Cola, limón o naranja.",
+  "alergenos": [],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 29
+}

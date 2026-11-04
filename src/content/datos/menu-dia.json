@@ -1,0 +1,6 @@
+[
+  { "id": "martes", "orden": 1, "dia": "Martes", "primeros": ["Gazpacho de temporada", "Ensalada de tomate y ventresca"], "segundos": ["Arroz de secreto y setas", "Pollo de corral a la brasa"], "postres": ["Crema catalana", "Fruta de temporada"] },
+  { "id": "miercoles", "orden": 2, "dia": "Miércoles", "primeros": ["Croquetas caseras", "Crema de calabaza"], "segundos": ["Butifarra con mongetes", "Bacalao a la llauna"], "postres": ["Tarta de queso", "Fruta de temporada"] },
+  { "id": "jueves", "orden": 3, "dia": "Jueves", "primeros": ["Ensaladilla rusa", "Sopa de pescado"], "segundos": ["Fideuà de gambas", "Entrecot de ternera"], "postres": ["Helado de turrón", "Fruta de temporada"] },
+  { "id": "viernes", "orden": 4, "dia": "Viernes", "primeros": ["Pimientos de Padrón", "Gazpacho de temporada"], "segundos": ["Arroz negro con alioli", "Secreto ibérico"], "postres": ["Crema catalana", "Tarta de queso"] }
+]

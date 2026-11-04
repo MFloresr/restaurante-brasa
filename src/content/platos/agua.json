@@ -1,0 +1,12 @@
+{
+  "nombre": "Agua",
+  "categoria": "bebidas",
+  "precio": 2.3,
+  "unidad": "botella 50 cl",
+  "descripcion": "Con o sin gas.",
+  "alergenos": [],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 28
+}

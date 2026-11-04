@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import { getMenuDia } from '../lib/contenido';
+import { euros } from '../lib/util';
+
+const dias = await getMenuDia();
+const precio = 15.9;
+---
+
+<Base titulo="Menú del día" descripcion="Menú del día de martes a viernes a mediodía: primero, segundo, postre, pan y bebida.">
+  <div class="contenedor cabecera-pagina">
+    <h1>Menú del día</h1>
+    <p>De martes a viernes, a mediodía. Primero, segundo, postre, pan y bebida.</p>
+  </div>
+  <section class="seccion" style="padding-top:20px">
+    <div class="contenedor">
+      <p class="precio-menu num">{euros(precio)}<small>IVA incluido · sin los fines de semana ni festivos</small></p>
+      <div class="menu-dia" style="margin-top:24px">
+        {dias.map((d) => (
+          <article class="dia">
+            <h2 style="font-size:1.6rem">{d.data.dia}</h2>
+            <h3 style="font:800 0.88rem var(--f-ui);color:var(--gris);margin:14px 0 6px">PRIMEROS</h3>
+            <ul>{d.data.primeros.map((p) => <li>{p}</li>)}</ul>
+            <h3 style="font:800 0.88rem var(--f-ui);color:var(--gris);margin:14px 0 6px">SEGUNDOS</h3>
+            <ul>{d.data.segundos.map((p) => <li>{p}</li>)}</ul>
+            <h3 style="font:800 0.88rem var(--f-ui);color:var(--gris);margin:14px 0 6px">POSTRES</h3>
+            <ul>{d.data.postres.map((p) => <li>{p}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+      <p class="letra-pequena" style="margin-top:20px;max-width:70ch">El menú cambia cada semana según el producto. Para conocer los alérgenos de cada plato del menú, consulta al equipo o la <a class="enlace" href="/alergenos/">tabla de alérgenos</a>. Disponible para llevar bajo pedido.</p>
+      <p style="margin-top:20px"><a class="btn" href="/reservar/">Reservar mesa</a></p>
+    </div>
+  </section>
+</Base>

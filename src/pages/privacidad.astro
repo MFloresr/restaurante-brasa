@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { sitio } from '../lib/sitio';
+const r = sitio.responsableLegal;
+---
+
+<Base titulo="Política de privacidad" descripcion="Cómo tratamos tus datos personales cuando reservas, pides para llevar o nos escribes." noindex>
+  <div class="contenedor cabecera-pagina"><h1>Política de privacidad</h1></div>
+  <section class="seccion legal" style="padding-top:8px">
+    <div class="contenedor">
+      <p class="aviso aviso--demo" style="max-width:72ch">Plantilla de ejemplo. El cliente y su asesor deben revisarla y completarla antes de publicar, sobre todo al conectar los formularios a un servicio de correo o a una pasarela de pago. Esta web, tal y como está, no guarda datos.</p>
+      <h2>Quién es el responsable</h2>
+      <p>{r.razonSocial}, con NIF {r.nif} y domicilio en {r.domicilio}. Puedes escribirnos a <a class="enlace" href={`mailto:${sitio.email}`}>{sitio.email}</a>.</p>
+      <h2>Qué datos tratamos y para qué</h2>
+      <ul class="lista">
+        <li><strong>Reservas:</strong> nombre, teléfono, correo (opcional), día, hora, número de comensales y notas, para gestionar tu mesa y contactar contigo.</li>
+        <li><strong>Pedidos para llevar:</strong> nombre, teléfono, hora de recogida, platos y notas, para preparar y entregarte el pedido.</li>
+        <li><strong>Grupos y contacto:</strong> nombre, correo, teléfono y mensaje, para responder a tu consulta.</li>
+      </ul>
+      <h2>Alergias e intolerancias</h2>
+      <p>Si indicas una alergia o intolerancia, se considera dato de salud y lo tratamos solo si nos das tu consentimiento explícito, que puedes retirar en cualquier momento. Lo usamos únicamente para preparar tu comida con seguridad. Te pedimos que no incluyas otros datos de salud en los formularios.</p>
+      <h2>Base jurídica</h2>
+      <p>La ejecución del servicio que solicitas (reserva o pedido), tu consentimiento en los formularios de consulta y para los datos de alergias, y el cumplimiento de obligaciones legales, como las fiscales.</p>
+      <h2>Cuánto tiempo los guardamos</h2>
+      <p>El tiempo necesario para atender tu solicitud y, después, durante los plazos legales que correspondan. [El cliente fija los plazos concretos.]</p>
+      <h2>A quién los comunicamos</h2>
+      <p>No cedemos tus datos a terceros salvo obligación legal. Si se activa el pago online, los datos necesarios se facilitarán a la entidad de pago. Usamos proveedores de alojamiento y de correo como encargados del tratamiento. [Indicar proveedores y ubicación.]</p>
+      <h2>Tus derechos</h2>
+      <p>Puedes pedir el acceso, la rectificación, la supresión, la oposición, la limitación y la portabilidad de tus datos, y retirar tu consentimiento, escribiéndonos al correo de arriba. Si crees que no los tratamos bien, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
+    </div>
+  </section>
+</Base>

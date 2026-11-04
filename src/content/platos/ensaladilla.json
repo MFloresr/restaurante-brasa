@@ -1,0 +1,15 @@
+{
+  "nombre": "Ensaladilla rusa",
+  "categoria": "picar",
+  "precio": 8.5,
+  "unidad": "ración",
+  "descripcion": "Con ventresca de atún y mayonesa casera.",
+  "alergenos": [
+    "huevos",
+    "pescado"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": false,
+  "orden": 10
+}

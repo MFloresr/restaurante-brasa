@@ -1,0 +1,16 @@
+{
+  "nombre": "Patatas bravas",
+  "categoria": "picar",
+  "precio": 7.5,
+  "unidad": "ración",
+  "descripcion": "Patata en dos cocciones con salsa brava casera y alioli suave.",
+  "alergenos": [
+    "huevos"
+  ],
+  "vegetariano": true,
+  "vegano": false,
+  "destacado": true,
+  "orden": 3,
+  "foto": "../../assets/fotos/bravas.jpg",
+  "fotoAlt": "Patatas bravas, emplatado"
+}

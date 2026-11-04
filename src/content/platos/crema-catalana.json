@@ -1,0 +1,17 @@
+{
+  "nombre": "Crema catalana",
+  "categoria": "postres",
+  "precio": 6.5,
+  "unidad": "ración",
+  "descripcion": "Quemada en el momento.",
+  "alergenos": [
+    "huevos",
+    "lacteos"
+  ],
+  "vegetariano": true,
+  "vegano": false,
+  "destacado": true,
+  "orden": 21,
+  "foto": "../../assets/fotos/crema-catalana.jpg",
+  "fotoAlt": "Crema catalana, emplatado"
+}

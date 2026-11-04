@@ -1,0 +1,14 @@
+{
+  "nombre": "Vermut de grifo",
+  "categoria": "bebidas",
+  "precio": 3.9,
+  "unidad": "copa",
+  "descripcion": "Con hielo, naranja y aceituna.",
+  "alergenos": [
+    "sulfitos"
+  ],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 27
+}

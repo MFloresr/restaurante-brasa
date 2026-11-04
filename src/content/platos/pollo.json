@@ -1,0 +1,12 @@
+{
+  "nombre": "Pollo de corral a la brasa",
+  "categoria": "brasa",
+  "precio": 16.5,
+  "unidad": "medio pollo",
+  "descripcion": "Con ajo y limón.",
+  "alergenos": [],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": false,
+  "orden": 14
+}

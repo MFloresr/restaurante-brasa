@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Formulario from '../components/Formulario.astro';
+import Preguntas from '../components/Preguntas.astro';
+import sala from '../assets/fotos/sala.jpg';
+import { euros } from '../lib/util';
+
+const menus = [
+  { nombre: 'Menú picoteo', precio: 32, texto: 'Pan con tomate, croquetas, bravas, tortilla, calamares y postre. Bebida incluida.' },
+  { nombre: 'Menú brasa', precio: 45, texto: 'Entrantes para compartir, chuletón o secreto a la brasa, postre y bebida.' },
+  { nombre: 'Menú arroz', precio: 38, texto: 'Entrantes para compartir, arroz a elegir, postre y bebida.' },
+];
+const hoy = new Date().toISOString().slice(0, 10);
+---
+
+<Base titulo="Grupos y celebraciones" descripcion="Menús cerrados para grupos desde ocho personas: picoteo, brasa o arroz. Pide una propuesta sin compromiso.">
+  <div class="contenedor cabecera-pagina">
+    <h1>Grupos y celebraciones</h1>
+    <p>Desde ocho personas, te preparamos un menú cerrado con precio por persona y adaptado a las alergias del grupo.</p>
+  </div>
+  <section class="seccion" style="padding-top:20px">
+    <div class="contenedor">
+      <div class="menu-dia">
+        {menus.map((m) => (
+          <article class="dia" style="border-top-color:var(--c-brasa)">
+            <h2 style="font-size:1.5rem">{m.nombre}</h2>
+            <p class="precio num" style="font-size:1.8rem;margin:6px 0">{euros(m.precio)} <small style="font:600 0.9rem var(--f-ui);color:var(--gris)">por persona</small></p>
+            <p style="margin:0;color:var(--gris)">{m.texto}</p>
+          </article>
+        ))}
+      </div>
+      <p class="letra-pequena" style="margin-top:14px">Precios de ejemplo, IVA incluido. La propuesta final depende del número de comensales y se entrega por escrito.</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--panel" aria-labelledby="t-propuesta">
+    <div class="contenedor dos dos--desigual" style="align-items:start">
+      <div>
+        <h2 id="t-propuesta">Pide una propuesta</h2>
+        <p class="texto gris">Cuéntanos cuántos sois, el día y qué celebráis. Te contestamos con un menú y un precio.</p>
+        <div class="foto-recta" style="margin-top:16px;max-width:420px"><Image src={sala} alt="Sala del restaurante con mesas preparadas" widths={[400, 700]} sizes="420px" style="aspect-ratio:4/3" /></div>
+      </div>
+      <Formulario tipo="grupo" alergias boton="Pedir la propuesta" mensajeOk="Solicitud recibida. Te enviamos una propuesta en el próximo día laborable.">
+        <div><label for="g-nombre">Nombre <span class="marca" aria-hidden="true">*</span></label><input id="g-nombre" name="nombre" type="text" autocomplete="name" required /><p class="error" data-error-para="nombre"></p></div>
+        <div><label for="g-tel">Teléfono <span class="marca" aria-hidden="true">*</span></label><input id="g-tel" name="telefono" type="tel" autocomplete="tel" required pattern="[0-9 +]{9,}" title="Escribe un teléfono de al menos 9 cifras" /><p class="error" data-error-para="telefono"></p></div>
+        <div><label for="g-email">Correo <span class="marca" aria-hidden="true">*</span></label><input id="g-email" name="email" type="email" autocomplete="email" required /><p class="error" data-error-para="email"></p></div>
+        <div><label for="g-personas">Comensales <span class="marca" aria-hidden="true">*</span></label><input id="g-personas" name="personas" type="number" min="8" max="80" inputmode="numeric" required /><p class="error" data-error-para="personas"></p></div>
+        <div><label for="g-fecha">Día</label><input id="g-fecha" name="fecha" type="date" min={hoy} /></div>
+        <div>
+          <label for="g-menu">Menú que os interesa</label>
+          <select id="g-menu" name="menu"><option value="">No lo sé todavía</option>{menus.map((m) => <option value={m.nombre}>{m.nombre}</option>)}</select>
+        </div>
+        <div class="ancho-total"><label for="g-alergias">Alergias o intolerancias del grupo (opcional)</label><textarea id="g-alergias" name="alergias" maxlength="300" style="min-height:90px"></textarea></div>
+        <div class="ancho-total"><label for="g-msg">Cuéntanos más (opcional)</label><textarea id="g-msg" name="mensaje" style="min-height:90px"></textarea></div>
+      </Formulario>
+    </div>
+  </section>
+
+  <section class="seccion"><div class="contenedor"><Preguntas tema="grupos" titulo="Sobre los grupos" /></div></section>
+</Base>

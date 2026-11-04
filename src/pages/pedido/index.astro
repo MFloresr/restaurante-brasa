@@ -1,0 +1,145 @@
+---
+import Base from '../../layouts/Base.astro';
+import { sitio } from '../../lib/sitio';
+---
+
+<Base titulo="Enviar la comanda" descripcion="Datos de recogida de tu pedido para llevar." noindex>
+  <div class="contenedor cabecera-pagina"><h1 style="font-size:clamp(2.2rem,5vw,3.6rem)">Tu comanda</h1></div>
+  <section class="seccion" style="padding-top:16px">
+    <div class="contenedor">
+      <div id="p-vacio" class="vacio" hidden>
+        <h2 style="font-size:1.8rem">Tu ticket está vacío</h2>
+        <p>Añade platos desde la carta para poder enviar la comanda.</p>
+        <a class="btn" href="/carta/">Ir a la carta</a>
+      </div>
+
+      <div class="pedido" id="pedido" data-iva={sitio.iva} data-minimo={sitio.pedidos.pedidoMinimo} data-prep={sitio.pedidos.minutosPreparacion} data-endpoint={sitio.endpointFormularios} hidden>
+        <form class="formulario" id="form-pedido" novalidate>
+          <p class="aviso aviso--demo" style="margin:0 0 20px">Modo demostración: no se cobra nada ni se envía la comanda a ninguna cocina real.</p>
+          <div class="rejilla-campos">
+            <div><label for="p-nombre">Nombre <span class="marca" aria-hidden="true">*</span></label><input id="p-nombre" name="nombre" type="text" autocomplete="name" required /><p class="error" data-error-para="nombre"></p></div>
+            <div><label for="p-tel">Teléfono <span class="marca" aria-hidden="true">*</span></label><input id="p-tel" name="telefono" type="tel" autocomplete="tel" required pattern="[0-9 +]{9,}" title="Escribe un teléfono de al menos 9 cifras" /><p class="error" data-error-para="telefono"></p></div>
+            <div class="ancho-total">
+              <fieldset>
+                <legend>Hora de recogida <span class="marca" aria-hidden="true">*</span></legend>
+                <div class="franjas" id="p-franjas" role="radiogroup" aria-label="Hora de recogida"></div>
+                <p class="error" data-error-para="hora"></p>
+              </fieldset>
+            </div>
+            <div class="ancho-total">
+              <label for="p-nota">Notas para la cocina (opcional)</label>
+              <textarea id="p-nota" name="nota" maxlength="300" aria-describedby="p-nota-ayuda"></textarea>
+              <p class="ayuda" id="p-nota-ayuda">Si tienes una alergia o intolerancia, indícalo aquí y díselo también al equipo al recoger. No incluyas otros datos de salud.</p>
+            </div>
+            <div class="ancho-total">
+              <label class="casilla"><input type="checkbox" name="condiciones" required /><span>He leído las <a href="/condiciones-de-pedido/">condiciones de pedido</a> y la <a href="/privacidad/">política de privacidad</a>.</span></label>
+              <p class="error" data-error-para="condiciones"></p>
+            </div>
+            <div class="honeypot" aria-hidden="true"><label>No rellenes este campo <input type="text" name="web" tabindex="-1" autocomplete="off" /></label></div>
+            <div class="ancho-total"><button class="btn" type="submit" id="p-enviar">Enviar la comanda</button><div role="status" aria-live="polite" id="p-estado"></div></div>
+          </div>
+        </form>
+
+        <aside aria-labelledby="t-resumen">
+          <div class="ticket" id="p-ticket" style="font-family:var(--f-ticket)">
+            <h2 id="t-resumen">BRASA NOVA</h2>
+            <p class="ticket__sub">COMANDA · PARA LLEVAR</p>
+            <hr />
+            <div id="p-lineas"></div>
+            <hr />
+            <div class="ticket__iva"><span>Base imponible</span><span class="num" id="p-base"></span></div>
+            <div class="ticket__iva"><span>IVA {sitio.iva} % incluido</span><span class="num" id="p-iva"></span></div>
+            <div class="ticket__total" style="margin-top:6px"><span>TOTAL</span><span class="num" id="p-total"></span></div>
+            <p class="ticket__sub" style="margin:10px 0 0">DEMOSTRACIÓN: no se cobra nada</p>
+          </div>
+          <p class="ticket-nota"><a class="enlace" href="/carta/">Volver a la carta</a> · Recogida en {sitio.direccion.calle}, {sitio.direccion.ciudad}</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { cargarCarta, formatoEuros, guardarTicket, leerTicket, type PlatoResumen } from '../../lib/ticket';
+  import { sitio } from '../../lib/sitio';
+
+  const caja = document.getElementById('pedido')!;
+  const vacio = document.getElementById('p-vacio')!;
+  const form = document.getElementById('form-pedido') as HTMLFormElement;
+  const estado = document.getElementById('p-estado')!;
+  const iva = Number(caja.dataset.iva), minimo = Number(caja.dataset.minimo), prep = Number(caja.dataset.prep);
+  let mapa = new Map<string, PlatoResumen>();
+  let total = 0;
+
+  // Franjas de recogida: de aquí a la próxima hora de servicio, cada 15 minutos, tras el tiempo de preparación
+  function franjas() {
+    const ahora = new Date(Date.now() + prep * 60000);
+    const partes = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(ahora).map((x) => [x.type, x.value]));
+    const dias = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const tramos = (sitio.semana as Record<number, string[][]>)[dias.indexOf(partes.weekday)] ?? [];
+    const minutos = (h: string) => Number(h.slice(0, 2)) * 60 + Number(h.slice(3, 5));
+    const desde = minutos(`${partes.hour}:${partes.minute}`);
+    const opciones: string[] = [];
+    for (const [a, c] of tramos) {
+      for (let m = Math.max(minutos(a), Math.ceil(desde / 15) * 15); m <= minutos(c) - 30; m += 15) opciones.push(`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
+    }
+    const lista = document.getElementById('p-franjas')!;
+    lista.innerHTML = opciones.length
+      ? opciones.slice(0, 12).map((h, i) => `<label><input type="radio" name="hora" value="${h}" ${i === 0 ? 'checked' : ''} /><span>${h}</span></label>`).join('')
+      : '<p class="gris" style="margin:0">Ahora mismo no podemos recibir más pedidos para hoy. Puedes <a class="enlace" href="/reservar/">reservar mesa</a> para otro día.</p>';
+  }
+
+  function resumen() {
+    const lineas = leerTicket().filter((l) => mapa.has(l.id));
+    total = lineas.reduce((s, l) => s + mapa.get(l.id)!.precio * l.cantidad, 0);
+    document.getElementById('p-lineas')!.innerHTML = lineas.map((l) => { const p = mapa.get(l.id)!; return `<div class="ticket__linea"><strong>${l.cantidad} × ${p.nombre}</strong><span class="num">${formatoEuros(p.precio * l.cantidad)}</span></div>`; }).join('');
+    const base = total / (1 + iva / 100);
+    document.getElementById('p-base')!.textContent = formatoEuros(base);
+    document.getElementById('p-iva')!.textContent = formatoEuros(total - base);
+    document.getElementById('p-total')!.textContent = formatoEuros(total);
+  }
+
+  (async () => {
+    mapa = new Map((await cargarCarta()).map((p) => [p.id, p]));
+    if (!leerTicket().some((l) => mapa.has(l.id))) { vacio.hidden = false; return; }
+    caja.hidden = false; resumen(); franjas();
+  })();
+
+  const campos = () => [...form.querySelectorAll<HTMLInputElement>('input[required]')];
+  const mensaje = (c: HTMLInputElement) => {
+    if (c.validity.valueMissing) return c.type === 'checkbox' ? 'Necesitamos que aceptes las condiciones.' : 'Este campo es obligatorio.';
+    if (c.validity.patternMismatch) return c.title || 'El formato no es válido.';
+    return '';
+  };
+  const validar = (c: HTMLInputElement) => { const m = mensaje(c); const e = form.querySelector<HTMLElement>(`[data-error-para="${c.name}"]`); if (e) e.textContent = m; c.setAttribute('aria-invalid', m ? 'true' : 'false'); return !m; };
+  campos().forEach((c) => c.addEventListener('blur', () => validar(c)));
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    estado.innerHTML = '';
+    const ok = campos().map(validar);
+    const hora = form.querySelector<HTMLInputElement>('input[name="hora"]:checked')?.value;
+    const errHora = form.querySelector<HTMLElement>('[data-error-para="hora"]')!;
+    errHora.textContent = hora ? '' : 'Elige una hora de recogida.';
+    if (total < minimo) { estado.innerHTML = `<p class="aviso aviso--error">El pedido mínimo es de ${formatoEuros(minimo)}. <a class="enlace" href="/carta/">Vuelve a la carta</a>.</p>`; return; }
+    if (ok.includes(false) || !hora) { (campos().find((c) => c.getAttribute('aria-invalid') === 'true') ?? form.querySelector<HTMLElement>('input[name="hora"]'))?.focus(); return; }
+    const datos = Object.fromEntries(new FormData(form).entries());
+    if (datos.web) return;
+    delete datos.web;
+    const boton = document.getElementById('p-enviar') as HTMLButtonElement;
+    boton.disabled = true; boton.textContent = 'Enviando…';
+    const numero = `B-${new Date().toISOString().slice(5, 10).replace('-', '')}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
+    const lineas = leerTicket().filter((l) => mapa.has(l.id));
+    const pedido = { numero, total, hora, nombre: datos.nombre, lineas: lineas.map((l) => ({ nombre: mapa.get(l.id)!.nombre, cantidad: l.cantidad, precio: mapa.get(l.id)!.precio })) };
+    try {
+      const url = caja.dataset.endpoint;
+      if (url) { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo: 'pedido', ...datos, ...pedido }) }); if (!r.ok) throw new Error(String(r.status)); }
+      try { sessionStorage.setItem('brasa:pedido', JSON.stringify(pedido)); } catch { /* sin almacenamiento */ }
+      guardarTicket([]);
+      location.href = '/pedido/gracias/';
+    } catch {
+      estado.innerHTML = '<p class="aviso aviso--error">No hemos podido enviar la comanda. Inténtalo de nuevo o llámanos.</p>';
+      boton.disabled = false; boton.textContent = 'Enviar la comanda';
+    }
+  });
+</script>

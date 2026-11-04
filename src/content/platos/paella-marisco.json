@@ -1,0 +1,19 @@
+{
+  "nombre": "Paella de marisco",
+  "categoria": "arroces",
+  "precio": 22.0,
+  "unidad": "por persona, mínimo 2",
+  "descripcion": "Gamba, mejillón y sepia, con fumet de pescado de roca.",
+  "alergenos": [
+    "crustaceos",
+    "moluscos",
+    "pescado",
+    "apio"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": true,
+  "orden": 17,
+  "foto": "../../assets/fotos/paella-marisco.jpg",
+  "fotoAlt": "Paella de marisco, emplatado"
+}

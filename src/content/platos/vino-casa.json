@@ -1,0 +1,16 @@
+{
+  "nombre": "Vino de la casa",
+  "categoria": "bebidas",
+  "precio": 3.8,
+  "unidad": "copa",
+  "descripcion": "Tinto o blanco de una bodega de la zona.",
+  "alergenos": [
+    "sulfitos"
+  ],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 26,
+  "foto": "../../assets/fotos/vino.jpg",
+  "fotoAlt": "Vino de la casa, emplatado"
+}

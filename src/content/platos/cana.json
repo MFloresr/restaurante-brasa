@@ -1,0 +1,16 @@
+{
+  "nombre": "Caña",
+  "categoria": "bebidas",
+  "precio": 2.8,
+  "unidad": "33 cl",
+  "descripcion": "Cerveza de barril, bien fría.",
+  "alergenos": [
+    "gluten"
+  ],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 25,
+  "foto": "../../assets/fotos/cana.jpg",
+  "fotoAlt": "Caña, emplatado"
+}

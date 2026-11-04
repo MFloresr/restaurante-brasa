@@ -1,0 +1,14 @@
+{
+  "nombre": "Pimientos de Padrón",
+  "categoria": "picar",
+  "precio": 8.5,
+  "unidad": "ración",
+  "descripcion": "Fritos, con sal en escamas. Unos pican y otros no.",
+  "alergenos": [],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 4,
+  "foto": "../../assets/fotos/pimientos.jpg",
+  "fotoAlt": "Pimientos de Padrón, emplatado"
+}

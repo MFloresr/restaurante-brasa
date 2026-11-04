@@ -1,0 +1,16 @@
+{
+  "nombre": "Arroz negro con alioli",
+  "categoria": "arroces",
+  "precio": 20.0,
+  "unidad": "por persona, mínimo 2",
+  "descripcion": "Con sepia y calamar, y alioli aparte.",
+  "alergenos": [
+    "moluscos",
+    "pescado",
+    "huevos"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": false,
+  "orden": 18
+}

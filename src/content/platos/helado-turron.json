@@ -1,0 +1,16 @@
+{
+  "nombre": "Helado de turrón",
+  "categoria": "postres",
+  "precio": 6.0,
+  "unidad": "ración",
+  "descripcion": "Con almendra tostada.",
+  "alergenos": [
+    "lacteos",
+    "huevos",
+    "frutos-secos"
+  ],
+  "vegetariano": true,
+  "vegano": false,
+  "destacado": false,
+  "orden": 23
+}

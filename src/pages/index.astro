@@ -1,0 +1,145 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import AbiertoAhora from '../components/AbiertoAhora.astro';
+import { getDestacados, getEntradas, getOpiniones } from '../lib/contenido';
+import { sitio } from '../lib/sitio';
+import { CATEGORIAS, euros } from '../lib/util';
+import brasa from '../assets/fotos/cocina-brasa.jpg';
+import chef from '../assets/fotos/chef-brasa.jpg';
+import paella from '../assets/fotos/paella-marisco.jpg';
+
+const destacados = (await getDestacados()).slice(0, 4);
+const entradas = (await getEntradas()).slice(0, 3);
+const opiniones = await getOpiniones();
+const color = Object.fromEntries(CATEGORIAS.map((c) => [c.id, c.color]));
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  name: sitio.nombre,
+  description: sitio.descripcion,
+  url: sitio.url,
+  telephone: sitio.telefono,
+  email: sitio.email,
+  servesCuisine: ['Mediterránea', 'Española', 'A la brasa'],
+  hasMenu: `${sitio.url}/carta/`,
+  acceptsReservations: true,
+  address: { '@type': 'PostalAddress', streetAddress: sitio.direccion.calle, postalCode: sitio.direccion.cp, addressLocality: sitio.direccion.ciudad, addressRegion: sitio.direccion.provincia, addressCountry: 'ES' },
+};
+---
+
+<Base titulo="Restaurante a la brasa: carta, reservas y pedido para llevar" jsonld={jsonld}>
+  <section class="pantalla" aria-labelledby="titulo-hero">
+    <div class="contenedor">
+      <div class="pantalla__fila">
+        <div>
+          <h1 id="titulo-hero">¿Qué te apetece?</h1>
+          <p class="pantalla__intro">Brasa, arroces y producto de temporada. Elige cómo quieres comer hoy.</p>
+        </div>
+        <div class="pantalla__foto"><Image src={paella} alt="Paella de marisco vista desde arriba, con mejillones y tiras de pimiento" widths={[500, 800]} sizes="40vw" loading="eager" fetchpriority="high" /></div>
+      </div>
+      <div class="modos">
+        <a class="modo modo--1" href="/reservar/">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="14" width="36" height="6" rx="2" /><path d="M10 20v18M38 20v18M16 14V8h16v6" /></svg>
+          <div><strong>Reservar mesa</strong><span>Elige día, hora y cuántos sois.</span></div>
+        </a>
+        <a class="modo modo--2" href="/carta/">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16h24l-2 24H14L12 16Z" /><path d="M18 16a6 6 0 0 1 12 0" /></svg>
+          <div><strong>Pedir para llevar</strong><span>Arma tu ticket y recógelo caliente.</span></div>
+        </a>
+        <a class="modo modo--3" href="/menu-del-dia/">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="16" /><path d="M24 14v10l7 4" /></svg>
+          <div><strong>Menú del día</strong><span>De martes a viernes, a mediodía.</span></div>
+        </a>
+      </div>
+      <p style="margin-top:22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center"><AbiertoAhora /><a class="enlace" href={`tel:${sitio.telefono}`}>{sitio.telefonoVisible}</a></p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--panel" aria-labelledby="t-pedido">
+    <div class="contenedor">
+      <div class="cabecera-seccion"><h2 id="t-pedido">Lo más pedido</h2><a class="enlace" href="/carta/">Ver toda la carta</a></div>
+      <div class="rejilla">
+        {destacados.map((p) => (
+          <article class="destacado" style={`--c:${color[p.data.categoria]}`}>
+            <div class="destacado__foto"><Image src={p.data.foto!} alt={p.data.fotoAlt ?? ''} widths={[400, 700]} sizes="(min-width: 960px) 24vw, 50vw" /></div>
+            <div class="destacado__cuerpo"><h3><a href={`/carta/?cat=${p.data.categoria}`}>{p.data.nombre}</a></h3><span class="precio num">{euros(p.data.precio)}</span></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-cocina">
+    <div class="contenedor dos">
+      <div class="foto-recta"><Image src={brasa} alt="Cocina con parrilla y piedras calientes para servir la carne a la brasa" widths={[500, 800, 1100]} sizes="(min-width: 900px) 45vw, 100vw" /></div>
+      <div>
+        <h2 id="t-cocina">Cocina a la brasa, sin atajos</h2>
+        <p class="texto gris">Brasa viva, producto de ganaderías y huertas cercanas y una carta que cambia con la temporada. Los arroces se hacen por encargo, para ajustarlos en cada olla.</p>
+        <ul class="lista">
+          <li>Arroces para dos o más, con caldo de cada día.</li>
+          <li>Cortes a la brasa para compartir, servidos a la piedra.</li>
+          <li>Alérgenos de cada plato, a un toque.</li>
+        </ul>
+        <a class="btn btn--sec" href="/nosotros/">Conoce la cocina</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--panel" aria-labelledby="t-alergenos">
+    <div class="contenedor dos dos--desigual">
+      <div>
+        <h2 id="t-alergenos">Come sin sustos</h2>
+        <p class="texto gris">Cada plato indica los 14 alérgenos de declaración obligatoria. Filtra la carta por vegetariano, vegano o por el alérgeno que quieras evitar.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="/carta/">Filtrar la carta</a><a class="btn btn--sec" href="/alergenos/">Tabla de alérgenos</a></div>
+      </div>
+      <div class="foto-recta"><Image src={chef} alt="Un cocinero troceando un chuletón a la brasa sobre una tabla de madera" widths={[500, 800]} sizes="(min-width: 900px) 40vw, 100vw" style="aspect-ratio:4/3" /></div>
+    </div>
+  </section>
+
+  <section class="cinta" aria-labelledby="t-cinta">
+    <div class="contenedor"><h2 id="t-cinta">¿Un grupo o una celebración? Te preparamos un menú cerrado.</h2><a class="btn" href="/grupos/">Menús para grupos</a></div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-opiniones">
+    <div class="contenedor">
+      <div class="cabecera-seccion"><h2 id="t-opiniones">Lo que cuentan</h2></div>
+      <div class="opiniones">
+        {opiniones.map((o) => <figure class="opinion"><blockquote>“{o.data.texto}”</blockquote><figcaption><strong>{o.data.nombre}</strong>{o.data.contexto}</figcaption></figure>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion--panel" aria-labelledby="t-blog">
+    <div class="contenedor">
+      <div class="cabecera-seccion"><h2 id="t-blog">Cuaderno de cocina</h2><a class="enlace" href="/blog/">Ver todo</a></div>
+      <div class="entradas">
+        {entradas.map((e) => (
+          <article class="entrada">
+            <Image src={e.data.foto} alt={e.data.fotoAlt} widths={[400, 700]} sizes="(min-width: 960px) 30vw, 100vw" />
+            <div class="entrada__cuerpo"><p class="entrada__meta">{e.data.categoria} · {e.data.minutos} min</p><h3><a href={`/blog/${e.id}/`}>{e.data.titulo}</a></h3><p>{e.data.resumen}</p></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="t-donde">
+    <div class="contenedor dos">
+      <div>
+        <h2 id="t-donde">Dónde y cuándo</h2>
+        <p><AbiertoAhora /></p>
+        <p>{sitio.direccion.calle}<br />{sitio.direccion.cp} {sitio.direccion.ciudad} ({sitio.direccion.provincia})</p>
+        <p>Teléfono: <a class="enlace" href={`tel:${sitio.telefono}`}>{sitio.telefonoVisible}</a></p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="/reservar/">Reservar mesa</a><a class="btn btn--sec" href="/contacto/">Cómo llegar</a></div>
+      </div>
+      <div class="tabla-envoltorio">
+        <table>
+          <caption class="solo-lectores">Horario del restaurante</caption>
+          <thead><tr><th scope="col">Día</th><th scope="col">Horario</th></tr></thead>
+          <tbody>{sitio.horarios.map((h) => <tr><th scope="row">{h.etiqueta}</th><td class="num">{h.tramos.length ? h.tramos.map((t) => `${t.abre} a ${t.cierra}`).join(' y ') : 'Cerrado'}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</Base>

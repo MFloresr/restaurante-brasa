@@ -1,0 +1,16 @@
+{
+  "nombre": "Pan con tomate",
+  "categoria": "picar",
+  "precio": 4.5,
+  "unidad": "ración",
+  "descripcion": "Pan de cristal tostado, tomate rallado, aceite de oliva y sal.",
+  "alergenos": [
+    "gluten"
+  ],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 1,
+  "foto": "../../assets/fotos/pan-tomate.jpg",
+  "fotoAlt": "Pan con tomate, emplatado"
+}

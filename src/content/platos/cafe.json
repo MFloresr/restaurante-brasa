@@ -1,0 +1,12 @@
+{
+  "nombre": "Café",
+  "categoria": "bebidas",
+  "precio": 1.9,
+  "unidad": "taza",
+  "descripcion": "Solo, cortado o con leche.",
+  "alergenos": [],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 30
+}

@@ -1,0 +1,17 @@
+{
+  "nombre": "Gazpacho de temporada",
+  "categoria": "picar",
+  "precio": 7.0,
+  "unidad": "bol",
+  "descripcion": "Tomate, pepino y pimiento, con picatostes.",
+  "alergenos": [
+    "gluten",
+    "sulfitos"
+  ],
+  "vegetariano": true,
+  "vegano": true,
+  "destacado": false,
+  "orden": 8,
+  "foto": "../../assets/fotos/gazpacho.jpg",
+  "fotoAlt": "Gazpacho de temporada, emplatado"
+}

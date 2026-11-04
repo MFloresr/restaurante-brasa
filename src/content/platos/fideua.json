@@ -1,0 +1,17 @@
+{
+  "nombre": "Fideuà de gambas",
+  "categoria": "arroces",
+  "precio": 20.0,
+  "unidad": "por persona, mínimo 2",
+  "descripcion": "Con gambas y alioli aparte.",
+  "alergenos": [
+    "gluten",
+    "crustaceos",
+    "pescado",
+    "huevos"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": false,
+  "orden": 20
+}

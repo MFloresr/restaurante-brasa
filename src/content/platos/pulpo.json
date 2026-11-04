@@ -1,0 +1,17 @@
+{
+  "nombre": "Pulpo a la brasa",
+  "categoria": "picar",
+  "precio": 21.5,
+  "unidad": "ración",
+  "descripcion": "Con parmentier de patata y pimentón de la Vera.",
+  "alergenos": [
+    "moluscos",
+    "lacteos"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": true,
+  "orden": 7,
+  "foto": "../../assets/fotos/pulpo.jpg",
+  "fotoAlt": "Pulpo a la brasa, emplatado"
+}

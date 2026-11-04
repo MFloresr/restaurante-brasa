@@ -1,0 +1,18 @@
+{
+  "nombre": "Croquetas caseras",
+  "categoria": "picar",
+  "precio": 9.0,
+  "unidad": "6 unidades",
+  "descripcion": "De jamón ibérico y pollo asado, con bechamel cremosa.",
+  "alergenos": [
+    "gluten",
+    "lacteos",
+    "huevos"
+  ],
+  "vegetariano": false,
+  "vegano": false,
+  "destacado": true,
+  "orden": 2,
+  "foto": "../../assets/fotos/croquetas.jpg",
+  "fotoAlt": "Croquetas caseras, emplatado"
+}

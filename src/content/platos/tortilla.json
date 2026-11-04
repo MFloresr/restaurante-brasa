@@ -1,0 +1,16 @@
+{
+  "nombre": "Tortilla de patatas",
+  "categoria": "picar",
+  "precio": 9.5,
+  "unidad": "ración",
+  "descripcion": "Poco cuajada, con cebolla confitada.",
+  "alergenos": [
+    "huevos"
+  ],
+  "vegetariano": true,
+  "vegano": false,
+  "destacado": false,
+  "orden": 5,
+  "foto": "../../assets/fotos/tortilla.jpg",
+  "fotoAlt": "Tortilla de patatas, emplatado"
+}

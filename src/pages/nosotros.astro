@@ -1,0 +1,39 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import sala from '../assets/fotos/sala.jpg';
+import brasa from '../assets/fotos/cocina-brasa.jpg';
+---
+
+<Base titulo="Nosotros: la cocina y el equipo" descripcion="Una cocina a la brasa con producto de proximidad. Conoce cómo trabajamos y a quién compramos.">
+  <div class="contenedor cabecera-pagina">
+    <h1>Nosotros</h1>
+    <p>Un restaurante pequeño con una idea sencilla: buen producto, fuego vivo y una cuenta sin sorpresas.</p>
+  </div>
+  <section class="seccion" style="padding-top:20px">
+    <div class="contenedor dos">
+      <div>
+        <h2>Cómo cocinamos</h2>
+        <p class="texto gris">Empezamos con una parrilla y cuatro mesas. Hoy tenemos sala y terraza, pero seguimos cocinando igual: producto de ganaderías y huertas cercanas, una carta corta que cambia con la temporada y los arroces por encargo.</p>
+        <ul class="lista">
+          <li>Compramos a proveedores que conocemos por su nombre.</li>
+          <li>Cambiamos la carta cuando cambia la temporada.</li>
+          <li>Informamos de los alérgenos de cada plato.</li>
+          <li>Pedimos que te quedes con hambre de volver, no con hambre de comer.</li>
+        </ul>
+      </div>
+      <div class="foto-recta"><Image src={brasa} alt="Zona de cocina con parrilla y piedras calientes" widths={[500, 800, 1100]} sizes="(min-width: 900px) 45vw, 100vw" /></div>
+    </div>
+  </section>
+  <section class="seccion seccion--panel">
+    <div class="contenedor dos">
+      <div class="foto-recta"><Image src={sala} alt="Sala del restaurante con mesas de madera preparadas" widths={[500, 800]} sizes="(min-width: 900px) 40vw, 100vw" style="max-height:480px" /></div>
+      <div>
+        <h2>La sala y la terraza</h2>
+        <p class="texto gris">Una sala con mesas de madera y una terraza para los días buenos. Si te apetece algo especial, cuéntanoslo al reservar.</p>
+        <p class="texto gris">[El cliente completa aquí la historia, el equipo y los proveedores reales.]</p>
+        <a class="btn" href="/reservar/">Reservar mesa</a>
+      </div>
+    </div>
+  </section>
+</Base>
